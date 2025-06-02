@@ -29,8 +29,24 @@ async function run() {
     const menuCollection = client.db('BistroBoss').collection('menu');
 
     app.get('/menu', async(req, res) => {
-        const result = await menuCollection.find().toArray();
+      const page = parseInt(req.query.page) || 1
+      const size = parseInt(req.query.size) || 5
+      console.log('page', page ,'size', size)
+      console.log('pagination',req.query)
+
+      if (isNaN(page) || page < 1) page = 1;
+  if (isNaN(size) || size < 1) size = 5;
+
+        const result = await menuCollection.find()
+        .skip((page - 1) * size)
+        .limit(size)
+        .toArray();
         res.send(result)
+    })
+
+    app.get('/menuCount', async(req, res) => {
+        const result = await menuCollection.estimatedDocumentCount()
+        res.send({count: result})
     })
 
 
