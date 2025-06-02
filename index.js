@@ -27,10 +27,16 @@ async function run() {
     await client.connect();
 
     const menuCollection = client.db('BistroBoss').collection('menu');
+    const cartCollection = client.db('BistroBoss').collection('carts');
 
     app.get('/menu', async(req, res) => {
-      const page = parseInt(req.query.page) || 1
-      const size = parseInt(req.query.size) || 5
+        const result = await menuCollection.find().toArray();
+        res.send(result)
+    })
+
+    app.get('/all-menu', async(req, res) => {
+      let page = parseInt(req.query.page) || 1
+      let size = parseInt(req.query.size) || 5
       console.log('page', page ,'size', size)
       console.log('pagination',req.query)
 
@@ -49,6 +55,11 @@ async function run() {
         res.send({count: result})
     })
 
+    app.post('/carts', async(req, res) => {
+      const cartItem = req.body
+      const result = await cartCollection.insertOne(cartItem);
+      res.send(result)
+    })
 
 
     // Send a ping to confirm a successful connection
