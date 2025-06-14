@@ -72,6 +72,12 @@ async function run() {
         res.send(result)
     })
 
+    app.post('/menu', verfyToken, verfyAdmin, async(req, res) => {
+      const menuItem = req.body
+      const result = await menuCollection.insertOne(menuItem)
+      res.send(result)
+    })
+
     app.get('/all-menu', async(req, res) => {
       let page = parseInt(req.query.page) || 1
       let size = parseInt(req.query.size) || 5
